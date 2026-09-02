@@ -11,7 +11,7 @@ import { existsSync, mkdirSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
+  app.setGlobalPrefix('api');
   // ==============================
   // 1. 上传文件目录
   // ==============================
