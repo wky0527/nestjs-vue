@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "noEmitOnError": false,
+    "module": "nodenext",
+    "strict": false,
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false, // 关闭严格空值检查（可改为false）
+    "strictBindCallApply": false, // 关闭bind/call/apply的严格检查（已有）
+    "noFallthroughCasesInSwitch": false // 关闭switch语句检查（已有）
+  },
+  "exclude": ["frontend", "node_modules", "dist"]
+}

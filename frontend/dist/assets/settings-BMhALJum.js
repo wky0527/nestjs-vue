@@ -1,0 +1,1 @@
+import{C as e}from"./index-D5_RKh9E.js";function n(t){return e.get("/settings/list",{params:{group:t}})}function g(t){return e.put("/settings/batch",{settings:t})}function a(t){return e.get("/settings/log/list",{params:t})}function i(t){return e.delete("/settings/log/cleanup",{data:{days:t}})}function r(){return e.get("/settings/log/stats")}export{a,g as b,r as c,i as d,n as g};
