@@ -3,6 +3,13 @@
 /node_modules
 /build
 
+# recruit-tool 独立子项目
+recruit-tool/**/node_modules
+recruit-tool/web/dist
+recruit-tool/server/recruit.sqlite
+recruit-tool/server/recruit.sqlite-shm
+recruit-tool/server/recruit.sqlite-wal
+
 # Logs
 logs
 *.log

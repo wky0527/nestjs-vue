@@ -1,0 +1,10 @@
+{
+  "name": "recruit-tool",
+  "version": "1.0.0",
+  "private": true,
+  "description": "招聘自动化工具（Express 后端 + Vue 前端，单服务部署）",
+  "scripts": {
+    "build": "cd web && npm install && npm run build && cd ../server && npm install --omit=dev",
+    "start": "node server/index.js"
+  }
+}
