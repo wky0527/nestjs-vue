@@ -1,16 +1,16 @@
 <template>
   <div>
     <el-row :gutter="16">
-      <el-col :span="14">
+      <el-col :span="14" :xs="24">
         <el-card shadow="never">
           <template #header>渠道效果对比（投递 / 面试 / 入职）</template>
-          <div ref="barRef" style="height: 380px"></div>
+          <div ref="barRef" class="chart"></div>
         </el-card>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="10" :xs="24">
         <el-card shadow="never">
           <template #header>渠道综合评分排名</template>
-          <div ref="rankRef" style="height: 380px"></div>
+          <div ref="rankRef" class="chart"></div>
         </el-card>
       </el-col>
     </el-row>
@@ -107,3 +107,10 @@ function render() {
 
 onMounted(load)
 </script>
+
+<style scoped>
+.chart { height: 380px; }
+@media (max-width: 767px) {
+  .chart { height: 280px; }
+}
+</style>

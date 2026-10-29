@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row :gutter="16">
-      <el-col :span="6" v-for="card in cards" :key="card.label">
+      <el-col :span="6" :xs="12" v-for="card in cards" :key="card.label">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-label">{{ card.label }}</div>
           <div class="stat-value" :style="{ color: card.color }">{{ card.value }}</div>
@@ -11,22 +11,22 @@
     </el-row>
 
     <el-row :gutter="16" style="margin-top: 16px">
-      <el-col :span="14">
+      <el-col :span="14" :xs="24">
         <el-card shadow="never">
           <template #header>近8周投递趋势（自动统计）</template>
-          <div ref="lineRef" style="height: 320px"></div>
+          <div ref="lineRef" class="chart"></div>
         </el-card>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="10" :xs="24">
         <el-card shadow="never">
           <template #header>候选人渠道分布</template>
-          <div ref="pieRef" style="height: 320px"></div>
+          <div ref="pieRef" class="chart"></div>
         </el-card>
       </el-col>
     </el-row>
 
     <el-row :gutter="16" style="margin-top: 16px">
-      <el-col :span="14">
+      <el-col :span="14" :xs="24">
         <el-card shadow="never">
           <template #header>
             跟进提醒
@@ -54,7 +54,7 @@
           </el-table>
         </el-card>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="10" :xs="24">
         <el-card shadow="never">
           <template #header>AI 分析待办</template>
           <div class="ai-todo">
@@ -98,6 +98,7 @@ const overview = ref<any>({ stats: {}, weeks: [], channelDist: [] })
 const reminders = ref<any[]>([])
 const lineRef = ref<HTMLElement>()
 const pieRef = ref<HTMLElement>()
+let resizeBound = false
 
 const cards = computed(() => {
   const s = overview.value.stats
@@ -117,7 +118,7 @@ async function load() {
 
 function renderCharts() {
   const weeks = overview.value.weeks || []
-  const line = echarts.init(lineRef.value!)
+  const line = echarts.getInstanceByDom(lineRef.value!) || echarts.init(lineRef.value!)
   line.setOption({
     tooltip: { trigger: 'axis' },
     grid: { left: 40, right: 20, top: 30, bottom: 30 },
@@ -130,7 +131,7 @@ function renderCharts() {
   })
 
   const dist = overview.value.channelDist || []
-  const pie = echarts.init(pieRef.value!)
+  const pie = echarts.getInstanceByDom(pieRef.value!) || echarts.init(pieRef.value!)
   pie.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
     legend: { bottom: 0 },
@@ -139,7 +140,10 @@ function renderCharts() {
       data: dist.map((d: any) => ({ name: d.channel, value: d.c })),
     }],
   })
-  window.addEventListener('resize', () => { line.resize(); pie.resize() })
+  if (!resizeBound) {
+    window.addEventListener('resize', () => { line.resize(); pie.resize() })
+    resizeBound = true
+  }
 }
 
 onMounted(load)
@@ -147,6 +151,10 @@ onMounted(load)
 
 <style scoped>
 .stat-card { text-align: center; }
+.chart { height: 320px; }
+@media (max-width: 767px) {
+  .chart { height: 240px; }
+}
 .stat-label { font-size: 13px; color: #909399; }
 .stat-value { font-size: 28px; font-weight: 700; margin: 6px 0; }
 .stat-sub { font-size: 12px; color: #c0c4cc; }

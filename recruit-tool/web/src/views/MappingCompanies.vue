@@ -147,7 +147,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
 .count { margin-left: auto; font-size: 13px; color: #909399; }
 .mk { margin-right: 4px; }
 </style>

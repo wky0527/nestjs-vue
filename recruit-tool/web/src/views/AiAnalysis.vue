@@ -2,7 +2,7 @@
   <div>
     <el-row :gutter="16">
       <!-- 左侧：选择候选人 / 粘贴简历 -->
-      <el-col :span="9">
+      <el-col :span="9" :xs="24">
         <el-card shadow="never">
           <template #header>发起 AI 分析</template>
           <el-form label-width="90px">
@@ -37,7 +37,7 @@
       </el-col>
 
       <!-- 右侧：分析结果 + 人工确认 -->
-      <el-col :span="15">
+      <el-col :span="15" :xs="24">
         <el-card shadow="never" v-if="!result">
           <el-empty description="尚无分析结果，请选择候选人并发起 AI 分析" />
         </el-card>
@@ -55,7 +55,7 @@
             </template>
 
             <div class="score-row">
-              <el-progress type="dashboard" :percentage="result.score" :color="scoreColor" :width="130" />
+              <el-progress type="dashboard" :percentage="result.score" :color="scoreColor" :width="dashWidth" />
               <div class="score-info">
                 <div class="conclusion">AI建议：{{ result.conclusion }}</div>
                 <div v-if="result.dimensions" class="dims">
@@ -74,11 +74,11 @@
 
             <el-divider />
             <el-row :gutter="12">
-              <el-col :span="12">
+              <el-col :span="12" :xs="24">
                 <h4>✅ 优势亮点</h4>
                 <ul class="list"><li v-for="(s, i) in result.strengths" :key="i">{{ s }}</li></ul>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="12" :xs="24">
                 <h4>⚠️ 风险提示</h4>
                 <ul class="list risk"><li v-for="(r, i) in result.risks" :key="i">{{ r }}</li></ul>
               </el-col>
@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '../api/request'
@@ -146,6 +146,12 @@ const finalScore = ref(0)
 const note = ref('')
 
 const scoreColor = (p: number) => (p >= 78 ? '#67c23a' : p >= 62 ? '#e6a23c' : '#f56c6c')
+
+// 移动端缩小仪表盘评分，避免与右侧信息挤压换行
+const dashWidth = ref(window.innerWidth < 768 ? 100 : 130)
+const onWinResize = () => { dashWidth.value = window.innerWidth < 768 ? 100 : 130 }
+onMounted(() => window.addEventListener('resize', onWinResize))
+onUnmounted(() => window.removeEventListener('resize', onWinResize))
 
 function onPick(id: number) {
   const c = candidates.value.find((x) => x.id === id)
@@ -226,6 +232,9 @@ onMounted(async () => {
 
 <style scoped>
 .score-row { display: flex; gap: 28px; align-items: center; }
+@media (max-width: 767px) {
+  .score-row { flex-wrap: wrap; gap: 16px; }
+}
 .conclusion { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
 .dims .dim { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
 .dim-name { width: 60px; font-size: 12px; color: #606266; }

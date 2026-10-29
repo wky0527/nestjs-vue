@@ -10,7 +10,7 @@
     />
 
     <el-row :gutter="16">
-      <el-col :span="6" v-for="k in kpiCards" :key="k.label">
+      <el-col :span="6" :xs="12" v-for="k in kpiCards" :key="k.label">
         <el-card shadow="never" class="kpi">
           <div class="kpi-label">{{ k.label }}</div>
           <div class="kpi-value" :style="{ color: k.color }">{{ k.value }}</div>
@@ -20,13 +20,13 @@
     </el-row>
 
     <el-row :gutter="16" style="margin-top: 16px">
-      <el-col :span="12">
+      <el-col :span="12" :xs="24">
         <el-card shadow="never">
           <template #header>Mapping 转化漏斗</template>
-          <div ref="funnelRef" style="height: 340px"></div>
+          <div ref="funnelRef" class="chart-lg"></div>
         </el-card>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="12" :xs="24">
         <el-card shadow="never">
           <template #header>各环节转化率</template>
           <el-table :data="data.funnel || []" size="small">
@@ -51,7 +51,7 @@
     </el-row>
 
     <el-row :gutter="16" style="margin-top: 16px">
-      <el-col :span="14">
+      <el-col :span="14" :xs="24">
         <el-card shadow="never">
           <template #header>来源渠道效果（人才从哪里来）</template>
           <el-table :data="data.channels || []" size="small" show-summary :summary-method="summary">
@@ -67,10 +67,10 @@
           </el-table>
         </el-card>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="10" :xs="24">
         <el-card shadow="never">
           <template #header>目标企业梯队分布</template>
-          <div ref="tierRef" style="height: 220px"></div>
+          <div ref="tierRef" class="chart-sm"></div>
         </el-card>
         <el-card shadow="never" style="margin-top: 16px">
           <template #header>画像匹配度</template>
@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import * as echarts from 'echarts'
 import request from '../api/request'
 
@@ -189,9 +189,18 @@ function renderCharts() {
       }],
     }, true)
   }
+  // 监听窗口尺寸变化，保证图表随布局重绘
+  window.removeEventListener('resize', resizeCharts)
+  window.addEventListener('resize', resizeCharts)
+}
+
+function resizeCharts() {
+  if (funnelRef.value) echarts.getInstanceByDom(funnelRef.value)?.resize()
+  if (tierRef.value) echarts.getInstanceByDom(tierRef.value)?.resize()
 }
 
 onMounted(load)
+onUnmounted(() => window.removeEventListener('resize', resizeCharts))
 </script>
 
 <style scoped>
@@ -205,4 +214,10 @@ onMounted(load)
 .match-num { width: 50px; font-size: 13px; color: #909399; text-align: right; }
 .match-item :deep(.el-progress) { flex: 1; }
 .keywords { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.chart-lg { height: 340px; }
+.chart-sm { height: 220px; }
+@media (max-width: 767px) {
+  .chart-lg { height: 260px; }
+  .kpi-value { font-size: 22px; }
+}
 </style>

@@ -15,13 +15,13 @@
     </el-card>
 
     <el-row :gutter="16" style="margin-top: 16px">
-      <el-col :span="14">
+      <el-col :span="14" :xs="24">
         <el-card shadow="never">
           <template #header>招聘漏斗</template>
-          <div ref="funnelRef" style="height: 420px"></div>
+          <div ref="funnelRef" class="chart"></div>
         </el-card>
       </el-col>
-      <el-col :span="10">
+      <el-col :span="10" :xs="24">
         <el-card shadow="never">
           <template #header>各环节转化率</template>
           <el-table :data="data.funnel || []" size="default">
@@ -56,6 +56,7 @@ const jobs = ref<any[]>([])
 const jobId = ref<number | undefined>(undefined)
 const data = ref<any>({ funnel: [], rejected: 0, hireRate: 0, avgStageDays: 0 })
 const funnelRef = ref<HTMLElement>()
+let resizeBound = false
 
 const convType = (v: number) => (v >= 70 ? 'success' : v >= 50 ? 'warning' : 'danger')
 
@@ -67,6 +68,14 @@ async function load() {
 function render() {
   const chart = funnelRef.value ? echarts.getInstanceByDom(funnelRef.value) || echarts.init(funnelRef.value) : null
   if (!chart) return
+  // 仅绑定一次 resize 监听，重绘时通过 DOM 取当前实例，避免重复注册
+  if (!resizeBound && funnelRef.value) {
+    window.addEventListener('resize', () => {
+      const inst = funnelRef.value && echarts.getInstanceByDom(funnelRef.value)
+      inst?.resize()
+    })
+    resizeBound = true
+  }
   chart.setOption({
     tooltip: { trigger: 'item', formatter: '{b}: {c} 人' },
     series: [{
@@ -87,6 +96,11 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.toolbar { display: flex; align-items: center; gap: 10px; }
-.metrics { margin-left: auto; display: flex; gap: 24px; font-size: 13px; color: #606266; }
+.toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.metrics { margin-left: auto; display: flex; gap: 24px; font-size: 13px; color: #606266; flex-wrap: wrap; }
+.chart { height: 420px; }
+@media (max-width: 767px) {
+  .chart { height: 300px; }
+  .metrics { margin-left: 0; gap: 12px; }
+}
 </style>
