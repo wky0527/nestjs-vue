@@ -6,6 +6,9 @@ const { analyze } = require('./ai-analyzer');
 const app = express();
 app.use(express.json({ limit: '2mb' }));
 
+// 人才 Mapping 模块路由
+require('./mapping-api')(app, db);
+
 const ok = (res, data) => res.json({ code: 0, data });
 const fail = (res, msg, status = 400) => res.status(status).json({ code: 1, message: msg });
 

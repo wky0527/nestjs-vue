@@ -59,7 +59,73 @@ CREATE TABLE IF NOT EXISTS ai_analyses (
   created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
   FOREIGN KEY (candidate_id) REFERENCES candidates(id)
 );
+
+-- ============ 人才 Mapping 模块 ============
+
+-- 岗位人才画像（以 Web 前端开发工程师为例）
+CREATE TABLE IF NOT EXISTS mapping_roles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,                          -- 岗位名称
+  tech_stack TEXT,                              -- 技术栈（逗号分隔）
+  must_have TEXT,                               -- 必备项
+  nice_to_have TEXT,                            -- 加分项
+  min_years INTEGER NOT NULL DEFAULT 0,         -- 工作年限下限
+  max_years INTEGER,                            -- 工作年限上限
+  business_background TEXT,                     -- 业务背景要求（逗号分隔）
+  degree_required TEXT,                         -- 学历要求
+  salary_range TEXT,                            -- 薪资期望区间
+  search_keywords TEXT,                         -- 搜索关键词（逗号分隔）
+  updated_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+-- 目标企业分析
+CREATE TABLE IF NOT EXISTS target_companies (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  type TEXT,                                    -- 企业大类：大厂/独角兽/国企金融/出海电商/SaaS/创业公司
+  tier TEXT NOT NULL DEFAULT 'B',              -- 梯队：S/A/B/C（匹配优先级）
+  talent_distribution TEXT,                     -- 人才分布特点
+  search_direction TEXT,                        -- 人才搜索方向建议
+  focus_stacks TEXT,                            -- 侧重技术栈（逗号分隔）
+  salary_level TEXT,                            -- 薪资水平（供对比）
+  note TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+-- 人才 Mapping 信息表（结构化候选人台账）
+CREATE TABLE IF NOT EXISTS mapping_records (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  phone TEXT,
+  company TEXT,                                 -- 当前企业（关联目标企业 name）
+  title TEXT,                                   -- 当前职级
+  skill_keywords TEXT,                          -- 技能关键词（逗号分隔）
+  years REAL,                                   -- 工作年限
+  degree TEXT,                                  -- 学历
+  business_bg TEXT,                             -- 业务背景
+  salary_expect TEXT,                           -- 当前薪资/期望薪资
+  source_channel TEXT,                          -- 来源渠道
+  status TEXT NOT NULL DEFAULT 'discovered',    -- 跟进状态 discovered/valid_resume/contacted/interested/interview_invite/no_answer/rejected
+  match_level TEXT,                             -- 画像匹配度 high/mid/low
+  remark TEXT,
+  is_deleted INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+-- Mapping 状态流转日志
+CREATE TABLE IF NOT EXISTS mapping_status_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  record_id INTEGER NOT NULL,
+  from_status TEXT,
+  to_status TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+  FOREIGN KEY (record_id) REFERENCES mapping_records(id)
+);
 `);
+
+// 人才 Mapping 种子数据（独立模块，首次建表时填充）
+require('./mapping-seed').seed(db);
 
 // ---------------- 种子数据 ----------------
 function seed() {

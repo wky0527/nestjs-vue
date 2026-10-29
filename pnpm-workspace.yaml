@@ -1,5 +1,7 @@
 packages:
   - 'frontend'
+  - 'recruit-tool/server'
+  - 'recruit-tool/web'
 
 allowBuilds:
   '@nestjs/core': false

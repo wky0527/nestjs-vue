@@ -36,6 +36,16 @@
           <el-icon><Briefcase /></el-icon>
           <span>职位管理</span>
         </el-menu-item>
+        <el-sub-menu index="mapping">
+          <template #title>
+            <el-icon><Compass /></el-icon>
+            <span>人才 Mapping</span>
+          </template>
+          <el-menu-item index="/mapping-profile">人才画像梳理</el-menu-item>
+          <el-menu-item index="/mapping-companies">目标企业分析</el-menu-item>
+          <el-menu-item index="/mapping-records">Mapping 信息表</el-menu-item>
+          <el-menu-item index="/mapping-stats">数据分析</el-menu-item>
+        </el-sub-menu>
       </el-menu>
     </el-aside>
     <el-container>
